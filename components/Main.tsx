@@ -90,27 +90,24 @@ export class NotificationsScreen extends React.Component {
     }
 
     componentDidMount() {
-        this._location();
-    }
+        Geolocation.watchPosition(
+            async (position) => {
 
-    _location = () => {
-        Geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
+                const { latitude, longitude } = position.coords
+
                 this.setState({
                     lat: latitude,
                     lon: longitude
                 })
-                //console.log(`latitude : ${latitude} longitude : ${longitude}`);
             },
             (error) => {
                 // See error code charts below.
-                console.log(error.code, error.message);
+                console.log(`${error.code, error.message} location error`);
             },
             {
-                enableHighAccuracy: true,
-                timeout: 15000,
-                maximumAge: 10000
+                enableHighAccuracy: false,
+                timeout: 20000,
+                maximumAge: 0
             }
         );
     }
@@ -118,13 +115,14 @@ export class NotificationsScreen extends React.Component {
     render() {
         const { navigation } = this.props;
         console.log(`${this.state.lat} :: ${this.state.lon}`);
+        SplashScreen.hide();
 
         return (
             // <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             //     <Button onPress={() => navigation.goBack()} title="Go back home" />
             // </View>
             <Container>
-                <MapView
+                { <MapView
                     style={{ flex: 1, }}
                     initialRegion={
                         {
@@ -148,7 +146,7 @@ export class NotificationsScreen extends React.Component {
                         />
                     }
 
-                </MapView>
+                </MapView>}
             </Container>
         );
     }
