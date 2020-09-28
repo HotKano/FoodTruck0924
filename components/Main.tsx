@@ -10,6 +10,7 @@ import Geolocation from '@react-native-community/geolocation'
 import MapView, { Marker } from 'react-native-maps'
 import styled from 'styled-components/native';
 import SplashScreen from 'react-native-splash-screen';
+import { initialWindowMetrics } from 'react-native-safe-area-context';
 
 const Container = styled.View`
   flex: 1;
@@ -85,19 +86,22 @@ export class HomeScreen extends React.Component {
 
 export class NotificationsScreen extends React.Component {
     state = {
-        lat: 0,
-        lon: 0
+        data: {
+            lat: 0,
+            lon: 0,
+            acc: 0,
+        },
     }
 
     componentDidMount() {
-        Geolocation.watchPosition(
-            async (position) => {
-
-                const { latitude, longitude } = position.coords
-
+        Geolocation.getCurrentPosition(
+            (position) => {
                 this.setState({
-                    lat: latitude,
-                    lon: longitude
+                    data: {
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude,
+                        acc: position.coords.accuracy
+                    }
                 })
             },
             (error) => {
@@ -105,7 +109,7 @@ export class NotificationsScreen extends React.Component {
                 console.log(`${error.code, error.message} location error`);
             },
             {
-                enableHighAccuracy: false,
+                enableHighAccuracy: true,
                 timeout: 20000,
                 maximumAge: 0
             }
@@ -114,7 +118,6 @@ export class NotificationsScreen extends React.Component {
 
     render() {
         const { navigation } = this.props;
-        console.log(`${this.state.lat} :: ${this.state.lon}`);
         SplashScreen.hide();
 
         return (
@@ -123,22 +126,22 @@ export class NotificationsScreen extends React.Component {
             // </View>
             <Container>
                 { <MapView
+                    // key 옵션이 없으면 맵이 마커로 이동하지 않음..
+                    key={(this.state.data.lat + this.state.data.lon+this.state.data.acc).toString()}
                     style={{ flex: 1, }}
-                    initialRegion={
-                        {
-                            latitude: this.state.lat,
-                            longitude: this.state.lon,
-                            latitudeDelta: 0.0922,
-                            longitudeDelta: 0.0421,
-                        }
-                    }
+                    initialRegion={{
+                        latitude: this.state.data.lat,
+                        longitude: this.state.data.lon,
+                        latitudeDelta: 0.005,
+                        longitudeDelta: 0.005,
+                    }}
                 >
                     {
                         <Marker
                             coordinate={
                                 {
-                                    latitude: this.state.lat,
-                                    longitude: this.state.lon
+                                    latitude: this.state.data.lat,
+                                    longitude: this.state.data.lon
                                 }
                             }
                             title="this is a marker"

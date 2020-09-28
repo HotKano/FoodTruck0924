@@ -44,6 +44,7 @@ class App extends Component {
               <Stack.Navigator>
                 <Stack.Screen name="Notifications" component={NotificationsScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
+                
               </Stack.Navigator>
             )
             : (

@@ -53,16 +53,16 @@ export class Login extends React.Component {
 
     componentDidMount() {
         // 자동 로그인 등 체크 할 예정.
-        axios.get('http://ihaly.cafe24.com/index.html', {
+        axios.get('http://ihaly.cafe24.com', {
 
         })
             .then((response: any) => {
                 this.setState({ nickname: "wow" })
-                console.log(response.data)
+                //console.log(response.data)
                 SplashScreen.hide();
             })
             .catch((error) => {
-                memberAlert("인터넷 접속이 원활하지 않습니다.");
+                // memberAlert("인터넷 접속이 원활하지 않습니다.");
                 console.log(error)
                 SplashScreen.hide();
 
@@ -79,11 +79,6 @@ export class Login extends React.Component {
     componentDidUpdate() {
         // state.setState 시 component가 update됨
         // console.log("componentDidUpdate");
-    }
-
-    _setAccount = (text: String) => {
-        const preAccount = text;
-        this.setState({ account: text });
     }
 
     _submit = (data: string) => {
@@ -107,23 +102,33 @@ export class Login extends React.Component {
 
                 // 상단 class 제어를 위한 handler를 parameter로 받음.
                 const { handler } = this.props.route.params ?? null
+                
                 if (handler != null) {
                     // 통신을 통한 인증
+                    console.log("call state001");
+                    console.log(`${this.state.account} ${this.state.password} ${this.state.nickname}`);
 
-                    axios.get('http://ihaly.cafe24.com/index.html', {
+                    const params = new URLSearchParams();
+                    params.append('id', this.state.account);
+                    params.append('password', this.state.password);
+                    params.append('nickname', this.state.nickname);
 
+                    axios({
+                        method: 'post',
+                        url: 'http://ihaly.cafe24.com/member/insert.do',
+                        data: params
+                    }).then((response: any) => {
+                        // this.setState({ nickname: "wow" })
+                        // console.log(response.data)
+                        console.log("call state002");
+                        // response data에 맞춘 로그인 분기
+                        handler(true); // 성공
                     })
-                        .then((response: any) => {
-                            // this.setState({ nickname: "wow" })
-                            console.log(response.data)
-                            // response data에 맞춘 로그인 분기
-                            handler(true); // 성공
-                        })
                         .catch((error) => {
                             memberAlert("인터넷 접속이 원활하지 않습니다.");
                             console.log(error)
                             handler(true); // 성공
-            
+
                             // this.props.navigation.replace(
                             //     'Home',
                             //     {
@@ -131,10 +136,8 @@ export class Login extends React.Component {
                             //     }
                             // )
                         });
-
-                    
                 } else {
-
+                    console.log("call fail");
                 }
 
             }
@@ -149,7 +152,7 @@ export class Login extends React.Component {
                     style={styles.input}
                     placeholder="계정"
                     textContentType="emailAddress"
-                    onChangeText={text => this._setAccount(text)}
+                    onChangeText={text => this.setState({ account: text })}
                 />
 
                 <Text style={styles.text}>비밀번호</Text>
@@ -157,14 +160,15 @@ export class Login extends React.Component {
                     style={styles.input}
                     placeholder="비밀번호"
                     secureTextEntry={true}
+                    onChangeText={text => this.setState({ password: text })}
                 />
 
-                {/* <Text style={styles.text}> `${this.state.nickname} wow`</Text>
+                <Text style={styles.text}> `${this.state.nickname} wow`</Text>
                 <TextInput
                     style={styles.input}
                     placeholder="닉네임"
                     onChangeText={text => this.setState({ nickname: text })}
-                /> */}
+                />
 
                 <Button
                     onPress={() => this._submit(this.state.account)}
