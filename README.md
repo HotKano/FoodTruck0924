@@ -1,2 +1,3 @@
 # FoodTruck
- ToyProject
+ToyProject
+React Native with TypeScript
