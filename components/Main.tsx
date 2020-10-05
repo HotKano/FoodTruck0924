@@ -109,6 +109,7 @@ interface ILocation {
 const TrackUserLocation = () => {
     const [location, setLocation] = useState<ILocation | undefined>(undefined);
 
+    // 비동기 통신
     useEffect(() => {
         Geolocation.getCurrentPosition
             (
@@ -152,6 +153,7 @@ const TrackUserLocation = () => {
                                         latitude: data.latitude,
                                         longitude: data.longitude,
                                     }}
+                                    onCalloutPress={}
                                 />
                             )
                         )
