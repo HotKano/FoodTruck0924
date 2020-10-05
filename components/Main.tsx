@@ -109,7 +109,8 @@ interface ILocation {
 const TrackUserLocation = () => {
     const [location, setLocation] = useState<ILocation | undefined>(undefined);
 
-    // 비동기 통신
+    // 비동기통신.
+    // Hook, class 안에서는 작동하지 않는다.
     useEffect(() => {
         Geolocation.getCurrentPosition
             (
