@@ -154,7 +154,7 @@ const TrackUserLocation = () => {
                                         latitude: data.latitude,
                                         longitude: data.longitude,
                                     }}
-                                    onCalloutPress={}
+                                    //onCalloutPress={}
                                 />
                             )
                         )
@@ -166,6 +166,11 @@ const TrackUserLocation = () => {
 };
 
 export class NotificationsScreen extends React.Component {
+
+    componentWillUnmount(){
+        Geolocation.stopObserving();
+    }
+
     render() {
         SplashScreen.hide();
         return (

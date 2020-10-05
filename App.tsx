@@ -42,9 +42,8 @@ class App extends Component {
           this.state.state
             ? (
               <Stack.Navigator>
-                <Stack.Screen name="Notifications" component={NotificationsScreen} />
                 <Stack.Screen name="Home" component={HomeScreen} />
-                
+                <Stack.Screen name="Notifications" component={NotificationsScreen} />
               </Stack.Navigator>
             )
             : (
