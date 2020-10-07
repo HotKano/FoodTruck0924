@@ -107,67 +107,86 @@ interface ILocation {
 }
 
 const TrackUserLocation = () => {
+
     const [location, setLocation] = useState<ILocation | undefined>(undefined);
 
-    // 비동기통신.
+    const testData = () =>{
+        Geolocation.getCurrentPosition
+        (
+            position => {
+                const { latitude, longitude } = position.coords;
+                setLocation({
+                    latitude,
+                    longitude,
+                });
+                console.log(`${latitude} :: ${longitude}`);
+            },
+            error => {
+                console.log(error);
+            },
+            {
+                enableHighAccuracy: false,
+                timeout: 15000,
+                maximumAge: 10000
+            },
+        );
+    }
+
+    // 비동기 처리.
     // Hook, class 안에서는 작동하지 않는다.
     useEffect(() => {
-        Geolocation.getCurrentPosition
-            (
-                position => {
-                    const { latitude, longitude } = position.coords;
-                    setLocation({
-                        latitude,
-                        longitude,
-                    });
-                },
-                error => {
-                    console.log(error);
-                },
-                {
-                    enableHighAccuracy: false,
-                    timeout: 15000,
-                    maximumAge: 10000
-                },
-            );
+        testData();
     }, []);
 
     return (
         <Container>
-            { location && (
-                <MapView
-                    style={{ flex: 1 }}
-                    initialRegion={{
-                        // location.latitude
-                        latitude: 34.7724303,
-                        // location.longitude
-                        longitude: 127.6985649,
-                        latitudeDelta: 0.005,
-                        longitudeDelta: 0.005,
-                    }}>
-                    {
-                        mapTestData.map((data, i) =>
-                            (
-                                <Marker
-                                    key={i}
-                                    coordinate={{
-                                        latitude: data.latitude,
-                                        longitude: data.longitude,
-                                    }}
-                                    //onCalloutPress={}
-                                />
-                            )
-                        )
-                    }
-                </MapView>
-            )}
+            <Button 
+                title="강지수"
+                onPress={()=> {}}
+            />
+            {
+            location && (
+                    <MapView
+                        style={{ flex: 1 }}
+                        showsMyLocationButton={true}
+                        showsUserLocation={true}
+                        initialRegion={{
+                            // location.latitude
+                            // 34.7724303
+                            latitude: location.latitude,
+                            // location.longitude
+                            // 127.6985649
+                            longitude: location.longitude,
+                            latitudeDelta: 0.005,
+                            longitudeDelta: 0.005,
+                        }}>
+                        {
+                            // data 위치 마커
+                            mapTestData.map
+                                (
+                                    (data, i) =>
+                                        (
+                                            <Marker
+                                                key={i}
+                                                coordinate={{
+                                                    latitude: data.latitude,
+                                                    longitude: data.longitude,
+                                                }}
+                                            //onCalloutPress={}
+                                            />
+                                        )
+                                )
+                        }
+                    </MapView>
+            )
+            }
         </Container>
     );
 };
 
 export class NotificationsScreen extends React.Component {
 
-    componentWillUnmount(){
+    componentWillUnmount() {
         Geolocation.stopObserving();
     }
 
